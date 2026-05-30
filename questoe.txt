@@ -1,0 +1,312 @@
+
+Lista de Exercícios — Estruturas de Dados
+Conteúdo: Árvores
+
+PARTE 1 — ÁRVORES (Questões Conceituais)
+
+1. Uma árvore é uma estrutura de dados:
+a) Linear 
+b) Sequencial
+x c) Não linear
+d) Circular
+
+2. O nó que não possui pai é chamado de:
+a) Folha
+x b) Raiz
+c) Interno
+d) Descendente
+
+3. Os nós que não possuem filhos são chamados de:
+a) Raiz
+b) Internos
+x c) Folhas
+d) Subárvores
+
+4. A altura de uma árvore corresponde:
+a) Número total de nós
+b) Quantidade de folhas
+x c) Maior caminho da raiz até uma folha
+d) Número de subárvores
+
+5. O grau de um nó corresponde:
+a) Quantidade de ancestrais
+x b) Quantidade de filhos
+c) Altura da árvore
+d) Quantidade de folhas
+
+6. Uma árvore com apenas um nó possui:
+x a) Altura 0
+b) Altura 1
+c) Grau 2
+d) Nenhuma folha
+
+7. Qual estrutura representa melhor relações hierárquicas?
+a) Vetores
+b) Pilhas
+c) Filas
+x d) Árvores
+
+8. Qual das aplicações abaixo utiliza árvores?
+x a) Sistema de arquivos
+b) Navegador web
+c) Calculadora simples
+d) Impressora
+
+9. Explique com suas palavras o que é uma árvore em estruturas de dados.
+
+    Ela tem inspiração na própria árvore biológica, com idealizações de folhas e nós.
+Mas na forma prática ela serve para organização de dados e informações.
+
+10. Diferencie:
+- nó raiz
+- nó folha
+- nó interno
+
+    O nó raiz é onde se inicia a árvore e ele não tem pai, o nó folha já é o fim da árvore
+e ele não possui filhos, já o nó interno é o meio termos dos outros dois pois ele possui
+pelo menos um filho e tem um pai.
+
+11. Explique o conceito de ancestral e descendente de árvores.
+
+    O ancestral é qualquer nó que aparece antes de outro nó no caminho até a raiz. 
+Já descendente é qualquer nó que está abaixo de um determinado nó na árvore.
+
+12. O que é profundidade de um nó?
+
+    É a quantidade de níveis entre o nó e a raiz da árvore.
+
+13. Explique a diferença entre grau de um nó e grau de uma árvore.
+
+    O grau de um nó é a quantidade de filhos que um nó possui, já o de uma árvore é 
+a maior quantidade de filhos que um único nó possui na estrutura.
+
+14. Qual a importância das árvores para sistemas computacionais modernos?
+
+    É importante porque permitem organizar, armazenar e buscar informações de forma eficiente.
+
+15. Desenhe uma árvore com:
+- 1 nó raiz
+- 3 níveis
+- pelo menos 8 nós
+
+Indique:
+- folhas = 3, 8, 10 e 17.
+- altura = 3.
+- grau da árvore = 2.
+
+                                 9
+                       5 ________|________11
+                     __|__              __|__
+                    |     |            |     |
+                    3     6           10     15
+                          |                  |
+                          8                  17
+
+
+PARTE 2 — IMPLEMENTAÇÃO DE ÁRVORES
+
+16. Implemente em linguagem C uma estrutura de nó para uma árvore genérica.
+
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct No {
+    int dado;
+    struct No *primeiroFilho;
+    struct No *proximoIrmao;
+} No;
+
+No* criarNo(int valor) {
+    No *novo = (No*) malloc(sizeof(No));
+
+    if (novo != NULL) {
+        novo->dado = valor;
+        novo->primeiroFilho = NULL;
+        novo->proximoIrmao = NULL;
+    }
+
+    return novo;
+}
+
+int main() {
+    No *raiz = criarNo(10);
+
+    printf("Raiz: %d\n", raiz->dado);
+
+    free(raiz);
+    return 0;
+}
+
+17. Crie uma função que inicializa uma árvore vazia.
+
+/* Inicializar árvore vazia */
+No* inicializarArvore() {
+    return NULL;
+}
+
+18. Implemente uma função para inserir filhos em um nó.
+
+No* criarNo(int valor) {
+    No *novo = (No*) malloc(sizeof(No));
+
+    if (novo != NULL) {
+        novo->dado = valor;
+        novo->primeiroFilho = NULL;
+        novo->proximoIrmao = NULL;
+    }
+
+    return novo;
+}
+
+void inserirFilho(No *pai, int valor) {
+    if (pai == NULL)
+        return;
+
+    No *novoFilho = criarNo(valor);
+
+    if (pai->primeiroFilho == NULL) {
+        pai->primeiroFilho = novoFilho;
+    }
+    else {
+        No *aux = pai->primeiroFilho;
+
+        while (aux->proximoIrmao != NULL) {
+            aux = aux->proximoIrmao;
+        }
+
+        aux->proximoIrmao = novoFilho;
+    }
+}
+
+19. Implemente uma função que conte quantos nós existem em uma árvore.
+
+int contarNos(No *raiz) {
+    if (raiz == NULL)
+        return 0;
+
+    int total = 1; 
+
+    No *filho = raiz->primeiroFilho;
+
+    while (filho != NULL) {
+        total += contarNos(filho);
+        filho = filho->proximoIrmao;
+    }
+
+    return total;
+}
+
+20. Implemente uma função recursiva para calcular a altura de uma árvore.
+
+int altura(No *raiz) {
+    if (raiz == NULL)
+        return 0;
+
+    int maiorAltura = 0;
+    No *filho = raiz->primeiroFilho;
+
+    while (filho != NULL) {
+        int h = altura(filho);
+
+        if (h > maiorAltura)
+            maiorAltura = h;
+
+        filho = filho->proximoIrmao;
+    }
+
+    return maiorAltura + 1;
+}
+
+21. Faça uma função que conte quantas folhas existem em uma árvore.
+
+int contarFolhas(No *raiz) {
+    if (raiz == NULL)
+        return 0;
+
+    if (raiz->primeiroFilho == NULL)
+        return 1;
+
+    int total = 0;
+    No *filho = raiz->primeiroFilho;
+
+    while (filho != NULL) {
+        total += contarFolhas(filho);
+        filho = filho->proximoIrmao;
+    }
+
+    return total;
+}
+
+22. Implemente uma função que verifique se um valor existe na árvore.
+
+int buscarValor(No *raiz, int valor) {
+    if (raiz == NULL)
+        return 0;
+
+    if (raiz->dado == valor)
+        return 1;
+
+    No *filho = raiz->primeiroFilho;
+
+    while (filho != NULL) {
+        if (buscarValor(filho, valor))
+            return 1;
+
+        filho = filho->proximoIrmao;
+    }
+
+    return 0;
+}
+
+23. Crie uma função que imprima os nós por nível.
+
+void imprimirNivel(No *raiz, int nivel) {
+    if (raiz == NULL)
+        return;
+
+    if (nivel == 1) {
+        printf("%d ", raiz->dado);
+    } else {
+        No *filho = raiz->primeiroFilho;
+
+        while (filho != NULL) {
+            imprimirNivel(filho, nivel - 1);
+            filho = filho->proximoIrmao;
+        }
+    }
+}
+
+void imprimirPorNivel(No *raiz) {
+    int h = altura(raiz);
+
+    for (int i = 1; i <= h; i++) {
+        imprimirNivel(raiz, i);
+        printf("\n");
+    }
+}
+
+24. Explique por que a recursão é muito utilizada em árvores.
+
+    Porque cada nó pode ser considerado a raiz de uma subárvore formada por seus filhos, então 
+um mesmo procedimento pode ser aplicado ao nó atual e, em seguida, repetido para cada uma de suas subárvores.
+
+25. Implemente uma função para destruir/liberar toda a árvore da memória.
+
+void destruirArvore(No *raiz) {
+    if (raiz == NULL)
+        return;
+
+    No *filho = raiz->primeiroFilho;
+
+    while (filho != NULL) {
+        No *proximo = filho->proximoIrmao;
+
+        destruirArvore(filho);
+
+        filho = proximo;
+    }
+
+    free(raiz);
+}
+
+
