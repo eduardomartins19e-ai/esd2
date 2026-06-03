@@ -1,0 +1,219 @@
+Lista de Exercícios — Estruturas de Dados
+Conteúdo: Árvores Binárias
+
+01. Uma árvore binária é uma árvore em que:
+a) Todos os nós possuem exatamente dois filhos
+x b) Cada nó pode possuir no máximo dois filhos
+c) Todos os níveis possuem dois nós
+d) Existem apenas dois níveis
+
+02. Em uma árvore binária:
+a) Existe apenas filho esquerdo
+b) Existe apenas filho direito
+x c) Cada nó pode ter filho esquerdo e direito
+d) Não existem folhas
+
+03. Qual percurso visita:
+Raiz → Esquerda → Direita?
+a) Em ordem
+b) Pós-ordem
+x c) Pré-ordem
+d) Largura
+
+04. Qual percurso visita:
+Esquerda → Raiz → Direita?
+a) Pré-ordem
+x b) Em ordem
+c) Pós-ordem
+d) Profundidade
+
+05. Qual percurso visita:
+Esquerda → Direita → Raiz?
+x a) Pós-ordem
+b) Pré-ordem
+c) Em ordem
+d) Sequencial
+
+06. Uma árvore binária completa:
+a) Possui apenas folhas
+x b) Possui todos os níveis completos, exceto possivelmente o último
+c) Não possui raiz
+d) Possui apenas dois nós
+
+07. Explique a diferença entre:
+- árvore binária cheia
+- árvore binária completa
+
+    A cheia é aquela em que todo nó possui exatamente 0 ou 2 filhos e a completa 
+possui todos os níveis completos, exceto possivelmente o último.
+
+08. Explique as diferenças entre os percursos:
+- pré-ordem: Ela percorre a árvore começando pela raiz, depois vai para o lado da esquerda
+e por fim para o lado da direita.
+
+- em ordem: Percorre a árvore começando pelo lado da esquerda, depois vai para a raiz da árvore
+e termina no lado da direita.
+
+- pós-ordem: Começa a percorrer pelo lado da esquerda, depois vai para o lado direito e 
+termina na raiz da árvore.
+
+09. Em quais situações árvores binárias são mais eficientes que vetores?
+    São mais eficientes principalmente quando é necessário realizar muitas buscas, 
+ inserções e remoções de dados de forma dinâmica.
+
+10. Desenhe uma árvore binária com 10 nós e realize:
+- percurso pré-ordem: 50, 30, 15, 45, 40, 47, 70, 65, 80, 82.
+- percurso em ordem: 15, 30, 45, 40, 47, 50, 70, 65, 80, 82. 
+- percurso pós-ordem: 15, 45, 30, 40, 47, 70, 50, 65, 80, 82. 
+
+                                                 50
+                                      30 ________|________ 70
+                                    __|__                __|__
+                                   |     |              |     |
+                                  15     45            65     80
+                                        __|__                 |__
+                                       |     |                   |
+                                      40     47                  82
+
+IMPLEMENTAÇÃO DE ÁRVORES BINÁRIAS
+
+36. Implemente a estrutura de um nó de árvore binária em C.
+
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct No {
+    int valor;
+    struct No *esq;
+    struct No *dir;
+} No;
+
+No* criarNo(int valor) {
+    No *novo = (No*) malloc(sizeof(No));
+
+    if (novo != NULL) {
+        novo->valor = valor;
+        novo->esq = NULL;
+        novo->dir = NULL;
+    }
+
+    return novo;
+}
+
+37. Crie uma função para inserir nós manualmente em uma árvore binária.
+
+void inserirManual(No *pai, int valor, char lado) {
+    if (pai == NULL) {
+        printf("Nó pai inexistente!\n");
+        return;
+    }
+
+    if (lado == 'E') {
+        if (pai->esq == NULL)
+            pai->esq = criarNo(valor);
+        else
+            printf("Filho esquerdo já existe!\n");
+    }
+    else if (lado == 'D') {
+        if (pai->dir == NULL)
+            pai->dir = criarNo(valor);
+        else
+            printf("Filho direito já existe!\n");
+    }
+    else {
+        printf("Lado inválido! Use 'E' ou 'D'.\n");
+    }
+}
+
+38. Implemente o percurso em pré-ordem.
+
+void preOrdem(No *raiz) {
+    if (raiz != NULL) {
+        printf("%d ", raiz->valor); 
+        preOrdem(raiz->esq);        
+        preOrdem(raiz->dir);        
+    }
+}
+
+39. Implemente o percurso em ordem.
+
+void emOrdem(No *raiz) {
+    if (raiz != NULL) {
+        emOrdem(raiz->esq);         
+        printf("%d ", raiz->valor); 
+        emOrdem(raiz->dir);         
+    }
+}
+
+40. Implemente o percurso em pós-ordem.
+
+void posOrdem(No *raiz) {
+    if (raiz != NULL) {
+        posOrdem(raiz->esq);         
+        posOrdem(raiz->dir);        
+        printf("%d ", raiz->valor);
+    }
+}
+
+41. Crie uma função que conte o número de nós da árvore binária.
+
+int contarNos(No *raiz) {
+    if (raiz == NULL)
+        return 0;
+
+    return 1 + contarNos(raiz->esq) + contarNos(raiz->dir);
+}
+
+42. Implemente uma função que calcule a altura da árvore binária.
+
+int altura(No *raiz) {
+    if (raiz == NULL)
+        return 0;
+
+    int altEsq = altura(raiz->esq);
+    int altDir = altura(raiz->dir);
+
+    if (altEsq > altDir)
+        return altEsq + 1;
+    else
+        return altDir + 1;
+}
+
+43. Implemente uma função que conte quantos nós folhas existem.
+
+int contarFolhas(No *raiz) {
+    if (raiz == NULL)
+        return 0;
+
+    if (raiz->esq == NULL && raiz->dir == NULL)
+        return 1;
+
+    return contarFolhas(raiz->esq) + contarFolhas(raiz->dir);
+}
+
+44. Crie uma função que espelhe uma árvore binária.
+
+void espelhar(No *raiz) {
+    if (raiz == NULL)
+        return;
+
+    raiz->esq = raiz->dir;
+    raiz->dir = temp;
+
+    espelhar(raiz->esq);
+    espelhar(raiz->dir);
+}
+
+45. Implemente uma função que verifique se duas árvores binárias são iguais.
+
+int saoIguais(No *a, No *b) {
+    if (a == NULL && b == NULL)
+        return 1;
+
+    if (a == NULL || b == NULL)
+        return 0;
+
+    return (a->valor == b->valor) &&
+           saoIguais(a->esq, b->esq) &&
+           saoIguais(a->dir, b->dir);
+}
