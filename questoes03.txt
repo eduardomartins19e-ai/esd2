@@ -1,0 +1,414 @@
+Lista de Exercícios — Estruturas de Dados
+Conteúdo: Árvores Binárias de Busca
+
+01. Em uma ABB:
+a) Valores menores ficam à direita
+b) Valores maiores ficam à esquerda
+x c) Valores menores ficam à esquerda e maiores à direita
+d) Não existe ordenação
+
+02. Qual percurso em uma ABB retorna os valores ordenados?
+a) Pré-ordem
+b) Pós-ordem
+x c) Em ordem
+d) Largura
+
+03. A complexidade média de busca em uma ABB balanceada é:
+a) O(1)
+x b) O(log n)
+c) O(n²)
+d) O(n!)
+
+04. Quando uma ABB se torna degenerada:
+a) Todos os nós possuem dois filhos
+x b) Ela se comporta como uma lista encadeada
+c) Não existem folhas
+d) Todos os valores são iguais
+
+05. Explique como funciona a inserção em uma ABB.
+
+    Na inserção em uma ABB, o novo valor é comparado com os nós da árvore começando pela raiz.
+Se for menor, segue para a subárvore esquerda; se for maior, segue para a direita.
+Esse processo se repete até encontrar uma posição vazia, onde o novo nó é criado e inserido, preservando
+a propriedade da ABB de que valores menores ficam à esquerda e maiores à direita.
+
+06. Explique como funciona a busca em uma ABB.
+
+    É realizada comparando o valor procurado com o valor armazenado no nó atual.
+Se os valores forem iguais, a busca termina com sucesso. Caso o valor procurado seja menor,
+a busca continua na subárvore esquerda; se for maior, segue para a subárvore direita. 
+
+07. Explique os três casos de remoção em ABB:
+
+- remoção de folha: ele simplesmente é removido, pois não possui filhos.
+
+- remoção de nó com um filho: ele é removido e seu filho assume sua posição na árvore.
+
+- remoção de nó com dois filhos: o valor do nó é substituído pelo seu sucessor em ordem, 
+menor valor da subárvore direita, ou pelo seu predecessor em ordem, maior valor da subárvore esquerda.
+
+08. Qual a principal vantagem de uma ABB em relação a uma árvore binária comum?
+
+É que ela mantém os elementos organizados de acordo com uma regra de ordenação.
+
+09. Explique o problema do desbalanceamento em ABB.
+
+    Ocorre quando os nós ficam distribuídos de forma desigual, 
+fazendo com que um dos lados da árvore fique muito maior que o outro.
+
+IMPLEMENTAÇÃO DE ABB
+
+10. Implemente a função de inserção em uma ABB usando recursão.
+
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct No {
+    int valor;
+    struct No *esq;
+    struct No *dir;
+} No;
+
+No* inserir(No *raiz, int valor) {
+    if (raiz == NULL) {
+        No *novo = (No*) malloc(sizeof(No));
+        novo->valor = valor;
+        novo->esq = NULL;
+        novo->dir = NULL;
+        return novo;
+    }
+
+    if (valor < raiz->valor) {
+        raiz->esq = inserir(raiz->esq, valor);
+    }
+    else if (valor > raiz->valor) {
+        raiz->dir = inserir(raiz->dir, valor);
+    }
+
+    return raiz;
+}
+
+11. Implemente a função de busca em uma ABB.
+
+No* buscar(No *raiz, int valor) {
+    if (raiz == NULL || raiz->valor == valor) {
+        return raiz;
+    }
+
+    if (valor < raiz->valor) {
+        return buscar(raiz->esq, valor);
+    }
+
+    return buscar(raiz->dir, valor);
+}
+
+12. Implemente o percurso em ordem em uma ABB.
+
+void emOrdem(No *raiz) {
+    if (raiz != NULL) {
+        emOrdem(raiz->esq);
+        printf("%d ", raiz->valor);
+        emOrdem(raiz->dir);
+    }
+}
+
+13. Implemente a remoção de um nó folha em uma ABB.
+
+No* removerFolha(No *raiz, int valor) {
+    if (raiz == NULL)
+        return NULL;
+
+    if (valor < raiz->valor) {
+        raiz->esq = removerFolha(raiz->esq, valor);
+    } else if (valor > raiz->valor) {
+        raiz->dir = removerFolha(raiz->dir, valor);
+    } else {
+        if (raiz->esq == NULL && raiz->dir == NULL) {
+            free(raiz);
+            return NULL;
+        }
+    }
+
+    return raiz;
+}
+
+14. Implemente a remoção de um nó com apenas um filho.
+
+No* removerUmFilho(No *raiz, int valor) {
+    if (raiz == NULL)
+        return NULL;
+
+    if (valor < raiz->valor) {
+        raiz->esq = removerUmFilho(raiz->esq, valor);
+    } else if (valor > raiz->valor) {
+        raiz->dir = removerUmFilho(raiz->dir, valor);
+    } else {
+        if (raiz->esq == NULL && raiz->dir != NULL) {
+            No *temp = raiz->dir;
+            free(raiz);
+            return temp;
+        }
+
+        if (raiz->dir == NULL && raiz->esq != NULL) {
+            No *temp = raiz->esq;
+            free(raiz);
+            return temp;
+        }
+    }
+    return raiz;
+}
+
+15. Implemente a remoção de um nó com dois filhos utilizando sucessor em ordem.
+
+No* menorNo(No *raiz) {
+    while (raiz->esq != NULL)
+        raiz = raiz->esq;
+    return raiz;
+}
+
+No* removerDoisFilhos(No *raiz, int valor) {
+    if (raiz == NULL)
+        return NULL;
+
+    if (valor < raiz->valor) {
+        raiz->esq = removerDoisFilhos(raiz->esq, valor);
+    } else if (valor > raiz->valor) {
+        raiz->dir = removerDoisFilhos(raiz->dir, valor);
+    } else {
+        if (raiz->esq != NULL && raiz->dir != NULL) {
+            No *sucessor = menorNo(raiz->dir);
+            raiz->valor = sucessor->valor;
+            raiz->dir = removerDoisFilhos(raiz->dir, sucessor->valor);
+        }
+    }
+
+    return raiz;
+}
+
+16. Implemente uma função que encontre:
+- maior valor
+- menor valor
+em uma ABB.
+
+No* menorValor(No *raiz) {
+    if (raiz == NULL)
+        return NULL;
+
+    while (raiz->esq != NULL)
+        raiz = raiz->esq;
+
+    return raiz;
+}
+
+No* maiorValor(No *raiz) {
+    if (raiz == NULL)
+        return NULL;
+
+    while (raiz->dir != NULL)
+        raiz = raiz->dir;
+
+    return raiz;
+}
+
+17. Crie uma função que verifique se uma árvore é realmente uma ABB válida.
+
+int ehABB(No *raiz, int min, int max) {
+    if (raiz == NULL)
+        return 1;
+
+    if (raiz->valor <= min || raiz->valor >= max)
+        return 0;
+
+    return ehABB(raiz->esq, min, raiz->valor) &&
+           ehABB(raiz->dir, raiz->valor, max);
+}
+
+18. Implemente uma função que conte quantos níveis existem na ABB.
+
+int contarNiveis(No *raiz) {
+    if (raiz == NULL)
+        return 0;
+
+    int alturaEsq = contarNiveis(raiz->esq);
+    int alturaDir = contarNiveis(raiz->dir);
+
+    return (alturaEsq > alturaDir ? alturaEsq : alturaDir) + 1;
+}
+
+19. Crie um programa completo de ABB com menu contendo:
+- Inserir
+- Buscar
+- Remover
+- Imprimir em ordem
+- Mostrar altura
+- Encerrar
+
+No* criarNo(int valor) {
+    No *novo = (No*) malloc(sizeof(No));
+    novo->valor = valor;
+    novo->esq = NULL;
+    novo->dir = NULL;
+    return novo;
+}
+
+No* inserir(No *raiz, int valor) {
+    if (raiz == NULL)
+        return criarNo(valor);
+
+    if (valor < raiz->valor)
+        raiz->esq = inserir(raiz->esq, valor);
+    else if (valor > raiz->valor)
+        raiz->dir = inserir(raiz->dir, valor);
+
+    return raiz;
+}
+
+No* buscar(No *raiz, int valor) {
+    if (raiz == NULL || raiz->valor == valor)
+        return raiz;
+
+    if (valor < raiz->valor)
+        return buscar(raiz->esq, valor);
+
+    return buscar(raiz->dir, valor);
+}
+
+No* menorNo(No *raiz) {
+    while (raiz && raiz->esq != NULL)
+        raiz = raiz->esq;
+
+    return raiz;
+}
+
+No* remover(No *raiz, int valor) {
+    if (raiz == NULL)
+        return NULL;
+
+    if (valor < raiz->valor) {
+        raiz->esq = remover(raiz->esq, valor);
+    } else if (valor > raiz->valor) {
+        raiz->dir = remover(raiz->dir, valor);
+    } else {
+        if (raiz->esq == NULL) {
+            No *temp = raiz->dir;
+            free(raiz);
+            return temp;
+        }
+
+        if (raiz->dir == NULL) {
+            No *temp = raiz->esq;
+            free(raiz);
+            return temp;
+        }
+
+        No *temp = menorNo(raiz->dir);
+        raiz->valor = temp->valor;
+        raiz->dir = remover(raiz->dir, temp->valor);
+    }
+
+    return raiz;
+}
+
+void emOrdem(No *raiz) {
+    if (raiz != NULL) {
+        emOrdem(raiz->esq);
+        printf("%d ", raiz->valor);
+        emOrdem(raiz->dir);
+    }
+}
+
+int altura(No *raiz) {
+    if (raiz == NULL)
+        return 0;
+
+    int esq = altura(raiz->esq);
+    int dir = altura(raiz->dir);
+
+    return (esq > dir ? esq : dir) + 1;
+}
+
+void liberar(No *raiz) {
+    if (raiz != NULL) {
+        liberar(raiz->esq);
+        liberar(raiz->dir);
+        free(raiz);
+    }
+}
+
+int main() {
+    No *raiz = NULL;
+    int opcao, valor;
+
+    do {
+        printf("\n=== MENU ABB ===\n");
+        printf("1 - Inserir\n");
+        printf("2 - Buscar\n");
+        printf("3 - Remover\n");
+        printf("4 - Imprimir em ordem\n");
+        printf("5 - Mostrar altura\n");
+        printf("0 - Encerrar\n");
+        printf("Opcao: ");
+        scanf("%d", &opcao);
+
+        switch (opcao) {
+            case 1:
+                printf("Valor a inserir: ");
+                scanf("%d", &valor);
+                raiz = inserir(raiz, valor);
+                break;
+
+            case 2:
+                printf("Valor a buscar: ");
+                scanf("%d", &valor);
+
+                if (buscar(raiz, valor))
+                    printf("Valor encontrado.\n");
+                else
+                    printf("Valor nao encontrado.\n");
+                break;
+
+            case 3:
+                printf("Valor a remover: ");
+                scanf("%d", &valor);
+                raiz = remover(raiz, valor);
+                break;
+
+            case 4:
+                printf("ABB em ordem: ");
+                emOrdem(raiz);
+                printf("\n");
+                break;
+
+            case 5:
+                printf("Altura da ABB: %d\n", altura(raiz));
+                break;
+
+            case 0:
+                printf("Encerrando...\n");
+                break;
+
+            default:
+                printf("Opcao invalida.\n");
+        }
+
+    } while (opcao != 0);
+
+    liberar(raiz);
+
+    return 0;
+}
+
+DESAFIOS (Nível Avançado)
+
+20. Implemente uma ABB sem utilizar recursão.
+
+21. Implemente uma árvore binária utilizando alocação dinâmica.
+
+22. Crie uma função que transforme uma árvore binária em espelho.
+
+23. Implemente uma função que verifique se uma árvore é balanceada.
+
+24. Pesquise e explique:
+- O que é AVL?
+- O que é árvores Rubro-Negra?
+- O que são B-Tree?
